@@ -41,7 +41,7 @@ final class ProductCategory: Model, Content {
 extension ProductCategory {
 
     // PATCH
-    struct PatchData: Decodable {
+    struct PatchData: Content, Decodable {
         var name: String?
         var percentDiscount: Int?
     }

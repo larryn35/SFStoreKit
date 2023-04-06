@@ -88,12 +88,12 @@ extension Product {
     }
 
     // PATCH
-    struct PatchData: Decodable {
-        let category: String?
-        let name: String?
-        let description: String?
-        let price: Int?
-        let sizes: [String]?
+    struct PatchData: Content, Decodable {
+        var category: String?
+        var name: String?
+        var description: String?
+        var price: Int?
+        var sizes: [String]?
     }
 
     // POST
