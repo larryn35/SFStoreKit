@@ -32,6 +32,7 @@ extension FieldKey {
 
     enum Order {
         static let customerName: FieldKey = "customer_name"
+        static let email: FieldKey = "email"
         static let address: FieldKey = "address"
         static let city: FieldKey = "city"
         static let state: FieldKey = "state"

@@ -20,6 +20,9 @@ final class Order: Model, Content {
     @Field(key: .Order.customerName)
     var customerName: String
 
+    @Field(key: .Order.email)
+    var email: String
+
     @Field(key: .Order.address)
     var address: String
 
@@ -43,9 +46,10 @@ final class Order: Model, Content {
 
     init() {}
 
-    init(id: UUID? = nil, customerName: String, address: String, city: String, state: String, zip: String, totalPrice: Int, discounts: Int?, createdAt: Date? = nil) {
+    init(id: UUID? = nil, customerName: String, email: String, address: String, city: String, state: String, zip: String, totalPrice: Int, discounts: Int?, createdAt: Date? = nil) {
         self.id = id
         self.customerName = customerName
+        self.email = email
         self.address = address
         self.city = city
         self.state = state

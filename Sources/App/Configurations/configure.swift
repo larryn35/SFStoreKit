@@ -29,6 +29,8 @@ public func configure(_ app: Application) throws {
     app.migrations.add(Order.Create())
     app.migrations.add(OrderItem.Create())
 
+    app.migrations.add(Order.AddEmail())
+
     try app.autoMigrate().wait()
     
     // register routes
