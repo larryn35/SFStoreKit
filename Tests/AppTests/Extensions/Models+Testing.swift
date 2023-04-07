@@ -93,3 +93,50 @@ extension OrderItem {
         return orderItem
     }
 }
+
+// MARK: - Product
+extension Product {
+    static func createShirtProduct(categoryID: UUID, save db: Database? = nil) async throws -> Product {
+        let shirt = Product(category: categoryID,
+                            name: "T-shirt",
+                            description: "Shirt description",
+                            price: 800,
+                            sizes: ["S", "M", "L"])
+
+        if let db {
+            try await shirt.save(on: db)
+        }
+
+        return shirt
+    }
+
+    static func createShirtData(category: String) -> Product.CreateData {
+        return .init(categoryName: category,
+                     name: "T-shirt",
+                     description: "Shirt description",
+                     price: 800,
+                     sizes: ["S", "M", "L"])
+    }
+
+    static func createPantsProduct(categoryID: UUID, save db: Database? = nil) async throws -> Product {
+        let pants = Product(category: categoryID,
+                            name: "Pants",
+                            description: "Pants description",
+                            price: 2400,
+                            sizes: ["M", "L"])
+
+        if let db {
+            try await pants.save(on: db)
+        }
+
+        return pants
+    }
+
+    static func createPantsData(category: String) -> Product.CreateData {
+        return .init(categoryName: category,
+                     name: "Pants",
+                     description: "Pants description",
+                     price: 2400,
+                     sizes: ["M", "L"])
+    }
+}

@@ -28,7 +28,8 @@ final class ProductTests: XCTestCase {
      }
 
     func testProductsCanBeRetrievedFromAPI() async throws {
-        let pants = try await savedPants()
+        let categoryID = try XCTUnwrap(bottomsCategory.id)
+        let pants = try await Product.createShirtProduct(categoryID: categoryID, save: app.db)
 
         let discount = try XCTUnwrap(bottomsCategory.percentDiscount)
         let expectedDiscountDouble = Double(pants.price) * Double(discount)/100
@@ -49,7 +50,7 @@ final class ProductTests: XCTestCase {
     }
 
     func testProductCanBeSavedWithAPI() async throws {
-        let shirtData = createShirtData()
+        let shirtData = Product.createShirtData(category: topsCategory.name)
 
         try app.test(.POST, path, beforeRequest: { request in
             try request.content.encode(shirtData)
@@ -66,7 +67,8 @@ final class ProductTests: XCTestCase {
     }
 
     func testDuplicateProductCannotBeSaved() async throws {
-        let shirt = try await savedShirt()
+        let categoryID = try XCTUnwrap(topsCategory.id)
+        let shirt = try await Product.createShirtProduct(categoryID: categoryID, save: app.db)
 
         let duplicate = Product.CreateData(categoryName: "tops",
                                            name: shirt.name,
@@ -92,8 +94,8 @@ final class ProductTests: XCTestCase {
     }
 
     func testProductCanBePatchedWithAPI() async throws {
-        let topsCategory = try XCTUnwrap(topsCategory.id)
-        let pants = Product(category: topsCategory,
+        let categoryID = try XCTUnwrap(topsCategory.id)
+        let pants = Product(category: categoryID,
                             name: "Pants",
                             description: "Fix category",
                             price: 2400, sizes: ["M"])
@@ -129,8 +131,11 @@ final class ProductTests: XCTestCase {
     }
 
     func testProductCategoryCanBeDeletedWithAPI() async throws {
-        let shirt = try await savedShirt()
-        let pants = try await savedPants()
+        let topsCategoryID = try XCTUnwrap(topsCategory.id)
+        let bottomsCategoryID = try XCTUnwrap(bottomsCategory.id)
+
+        let shirt = try await Product.createShirtProduct(categoryID: topsCategoryID, save: app.db)
+        let pants = try await Product.createPantsProduct(categoryID: bottomsCategoryID, save: app.db)
 
         let shirtProductID = try XCTUnwrap(shirt.id)
         let deletePath = path + "/delete/\(shirtProductID)"
@@ -152,49 +157,5 @@ final class ProductTests: XCTestCase {
             XCTAssertEqual(products[0].name, pants.name)
             XCTAssertEqual(products[0].description, pants.description)
         })
-    }
-}
-
-// MARK: - Helpers
-
-extension ProductTests {
-    func savedShirt() async throws -> Product {
-        let categoryID = try XCTUnwrap(topsCategory.id)
-        let shirt = Product(category: categoryID,
-                            name: "T-shirt",
-                            description: "Shirt description",
-                            price: 800,
-                            sizes: ["S", "M", "L"])
-
-        try await shirt.save(on: app.db)
-        return shirt
-    }
-
-    func createShirtData() -> Product.CreateData {
-        return .init(categoryName: topsCategory.name,
-                     name: "T-shirt",
-                     description: "Shirt description",
-                     price: 800,
-                     sizes: ["S", "M", "L"])
-    }
-
-    func savedPants() async throws -> Product {
-        let categoryID = try XCTUnwrap(bottomsCategory.id)
-        let pants = Product(category: categoryID,
-                            name: "Pants",
-                            description: "Pants description",
-                            price: 2400,
-                            sizes: ["M", "L"])
-
-        try await pants.save(on: app.db)
-        return pants
-    }
-
-    func createPantsData() -> Product.CreateData {
-        return .init(categoryName: bottomsCategory.name,
-                     name: "Pants",
-                     description: "Pants description",
-                     price: 2400,
-                     sizes: ["M", "L"])
     }
 }
