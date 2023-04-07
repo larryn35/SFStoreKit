@@ -30,6 +30,7 @@ public func configure(_ app: Application) throws {
     app.migrations.add(OrderItem.Create())
 
     app.migrations.add(Order.AddEmail())
+    app.migrations.add(ColorVariant.FixUniqueConstraint())
 
     try app.autoMigrate().wait()
     
