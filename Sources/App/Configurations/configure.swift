@@ -32,6 +32,10 @@ public func configure(_ app: Application) throws {
     app.migrations.add(Order.AddEmail())
     app.migrations.add(ColorVariant.FixUniqueConstraint())
 
+    if (app.environment != .testing) {
+        app.migrations.add(Seed.Tops())
+    }
+
     try app.autoMigrate().wait()
     
     // register routes
