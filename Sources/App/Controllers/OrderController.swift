@@ -17,7 +17,15 @@ struct OrderController: RouteCollection {
 
     // GET Request: /orders route
     func index(req: Request) async throws -> [Order] {
-        try await Order.query(on: req.db).with(\.$items).all()
+        let orders = try await Order.query(on: req.db)
+            .with(\.$items)
+            .all()
+
+        for order in orders {
+            order.discounts = order.items.reduce(0) { $0 + $1.discount }
+        }
+
+        return orders
     }
 
     // POST Request: /orders route

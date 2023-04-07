@@ -46,7 +46,7 @@ final class Order: Model, Content {
 
     init() {}
 
-    init(id: UUID? = nil, customerName: String, email: String, address: String, city: String, state: String, zip: String, totalPrice: Int, discounts: Int?, createdAt: Date? = nil) {
+    init(id: UUID? = nil, customerName: String, email: String, address: String, city: String, state: String, zip: String, totalPrice: Int, discounts: Int? = nil, createdAt: Date? = nil) {
         self.id = id
         self.customerName = customerName
         self.email = email
