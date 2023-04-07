@@ -35,6 +35,7 @@ public func configure(_ app: Application) throws {
     if (app.environment != .testing) {
         app.migrations.add(Seed.Tops())
         app.migrations.add(Seed.Bottoms())
+        app.migrations.add(Seed.Dresses())
     }
 
     try app.autoMigrate().wait()
