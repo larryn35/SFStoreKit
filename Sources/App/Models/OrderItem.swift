@@ -78,8 +78,8 @@ extension OrderItem {
         let image: String
         let color: String
         let size: String
-        let quantity: Int
         let price: Int
         let discount: Int
+        let quantity: Int
     }
 }
