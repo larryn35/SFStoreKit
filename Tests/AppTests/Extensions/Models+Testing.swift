@@ -118,6 +118,20 @@ extension Product {
                      sizes: ["S", "M", "L"])
     }
 
+    static func createSweaterProduct(categoryID: UUID, save db: Database? = nil) async throws -> Product {
+        let sweater = Product(category: categoryID,
+                            name: "Sweater",
+                            description: "Sweater description",
+                            price: 2400,
+                            sizes: ["M", "L"])
+
+        if let db {
+            try await sweater.save(on: db)
+        }
+
+        return sweater
+    }
+
     static func createPantsProduct(categoryID: UUID, save db: Database? = nil) async throws -> Product {
         let pants = Product(category: categoryID,
                             name: "Pants",
@@ -138,5 +152,53 @@ extension Product {
                      description: "Pants description",
                      price: 2400,
                      sizes: ["M", "L"])
+    }
+}
+
+extension ColorVariant {
+    static func createBlueVariant(productID: UUID, save db: Database? = nil) async throws -> ColorVariant {
+        let blueVariant = ColorVariant(product: productID,
+                                color: "Blue",
+                                hex: "0059C5",
+                                image: "blue-0059C5")
+
+        if let db {
+            try await blueVariant.save(on: db)
+        }
+
+        return blueVariant
+    }
+
+    static func createBlueVariantData(productID: UUID) -> ColorVariant.CreateData {
+        return ColorVariant.CreateData(productID: productID,
+                                       color: "Blue",
+                                       hex: "0000ff",
+                                       image: "blue-0059C5")
+    }
+
+    static func createGreenVariant(productID: UUID, save db: Database? = nil) async throws -> ColorVariant {
+        let greenVariant = ColorVariant(product: productID,
+                                color: "Green",
+                                hex: "00ff00",
+                                image: "green-00ff00")
+
+        if let db {
+            try await greenVariant.save(on: db)
+        }
+
+        return greenVariant
+    }
+
+    static func createRedVariant(productID: UUID, save db: Database? = nil) async throws -> ColorVariant {
+        let greenVariant = ColorVariant(product: productID,
+                                color: "Red",
+                                hex: "ff0000",
+                                image: "red-ff0000")
+
+        if let db {
+            try await greenVariant.save(on: db)
+        }
+
+        return greenVariant
     }
 }

@@ -34,7 +34,7 @@ final class ColorVariant: Model, Content {
 
     init() {}
 
-    init(id: UUID? = nil, product: Product.IDValue, color: String, hex: String, image: String, createdAt: Date?, updatedAt: Date?) {
+    init(id: UUID? = nil, product: Product.IDValue, color: String, hex: String, image: String, createdAt: Date? = nil, updatedAt: Date? = nil) {
         self.id = id
         self.$product.id = product
         self.color = color
@@ -65,8 +65,8 @@ extension ColorVariant {
 
     // PATCH
     struct PatchData: Content {
-        let color: String?
-        let hex: String?
-        let image: String?
+        var color: String?
+        var hex: String?
+        var image: String?
     }
 }
