@@ -48,6 +48,33 @@ final class OrderItemTests: XCTestCase {
         })
     }
 
+    func testOrderItemsForOrderCanBeRetrievedFromAPI() async throws {
+        // Tim's item
+        let _ = try await OrderItem.createShirtOrderItem(for: timsOrderID, save: app.db)
+
+        // Leanne's items
+        let shoesOrderItem = try await OrderItem.createShoesOrderItem(for: leannesOrderID, save: app.db)
+        let _ = try await OrderItem.createShirtOrderItem(for: leannesOrderID, save: app.db)
+
+        let orderIDPath = path + "/\(leannesOrderID!)"
+
+        // Expected - Fetch Leanne's items
+        try app.test(.GET, orderIDPath, afterResponse: { response in
+            XCTAssertEqual(response.status, .ok)
+
+            let orderItems = try response.content.decode([OrderItem].self)
+
+            XCTAssertEqual(orderItems.count, 2)
+            XCTAssertEqual(orderItems[0].name, shoesOrderItem.name)
+            XCTAssertEqual(orderItems[0].image, shoesOrderItem.image)
+            XCTAssertEqual(orderItems[0].color, shoesOrderItem.color)
+            XCTAssertEqual(orderItems[0].size, shoesOrderItem.size)
+            XCTAssertEqual(orderItems[0].price, shoesOrderItem.price)
+            XCTAssertEqual(orderItems[0].discount, shoesOrderItem.discount)
+            XCTAssertEqual(orderItems[0].quantity, shoesOrderItem.quantity)
+        })
+    }
+
     func testOrderItemCanBeSavedWithAPI() async throws {
         let tshirtOrderItemData = OrderItem.createShirtOrderItemData(for: timsOrderID)
         let items = [tshirtOrderItemData]
