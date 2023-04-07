@@ -62,8 +62,10 @@ struct Seed {
         }
 
         func revert(on database: Database) async throws {
-            try await ColorVariant.query(on: database).delete()
-            try await Product.query(on: database).delete()
+            try await ProductCategory
+                .query(on: database)
+                .filter(\.$name == "Tops")
+                .delete()
         }
     }
 }

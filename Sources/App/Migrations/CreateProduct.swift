@@ -14,7 +14,8 @@ extension Product {
                 .id()
                 .field(.Product.categoryID, .uuid, .required)
                 .foreignKey(.Product.categoryID,
-                            references: ProductCategory.schema, .id)
+                            references: ProductCategory.schema, .id,
+                            onDelete: .cascade)
                 .field(.name, .string, .required)
                 .unique(on: .name)
                 .field(.Product.description, .string, .required)

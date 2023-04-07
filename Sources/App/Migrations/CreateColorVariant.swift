@@ -14,7 +14,8 @@ extension ColorVariant {
                 .id()
                 .field(.ColorVariant.productID, .uuid, .required)
                 .foreignKey(.ColorVariant.productID,
-                            references: Product.schema, .id)
+                            references: Product.schema, .id,
+                            onDelete: .cascade)
                 .field(.ColorVariant.color, .string, .required)
                 .unique(on: .ColorVariant.color)
                 .field(.ColorVariant.hex, .string, .required)
