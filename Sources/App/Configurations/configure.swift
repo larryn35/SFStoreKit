@@ -36,6 +36,7 @@ public func configure(_ app: Application) throws {
         app.migrations.add(Seed.Tops())
         app.migrations.add(Seed.Bottoms())
         app.migrations.add(Seed.Dresses())
+        app.migrations.add(Seed.Footwear())
     }
 
     try app.autoMigrate().wait()
