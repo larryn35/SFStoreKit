@@ -13,7 +13,7 @@ extension Seed {
         func prepare(on database: Database) async throws {
             let categoryID = UUID()
             let dressesCategpry = ProductCategory(id: categoryID,
-                                                  name: "Dresses", percentDiscount: 0)
+                                                  name: "dresses", percentDiscount: 0)
             try await dressesCategpry.save(on: database)
 
             let sundressModel = Sundress(categoryID: categoryID)

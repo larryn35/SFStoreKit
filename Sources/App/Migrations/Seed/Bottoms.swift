@@ -15,7 +15,7 @@ extension Seed {
 
         func prepare(on database: Database) async throws {
             let bottomsCategory = ProductCategory(id: categoryID,
-                                                  name: "Bottoms", percentDiscount: 0)
+                                                  name: "bottoms", percentDiscount: 0)
             try await bottomsCategory.save(on: database)
 
             let swimmingShortsModel = SwimmingShorts(categoryID: categoryID)

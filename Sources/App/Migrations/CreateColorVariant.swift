@@ -17,7 +17,7 @@ extension ColorVariant {
                             references: Product.schema, .id,
                             onDelete: .cascade)
                 .field(.ColorVariant.color, .string, .required)
-                .unique(on: .ColorVariant.color)
+                .unique(on: .ColorVariant.color, .ColorVariant.productID)
                 .field(.ColorVariant.hex, .string, .required)
                 .field(.ColorVariant.image, .string, .required)
                 .field(.createdAt, .date)

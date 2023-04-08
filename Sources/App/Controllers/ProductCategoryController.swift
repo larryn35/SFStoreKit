@@ -30,7 +30,7 @@ struct ProductCategoryController: RouteCollection {
         }
 
         let category = try await ProductCategory.query(on: req.db)
-            .filter(\.$name == categoryName)
+            .filter(\.$name == categoryName.lowercased())
             .first()
 
         if let category {

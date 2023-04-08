@@ -9,7 +9,7 @@ import Fluent
 import Vapor
 
 final class ColorVariant: Model, Content {
-    static let schema: String = "colorVariants"
+    static let schema: String = "color_variants"
 
     @ID(key: .id)
     var id: UUID?

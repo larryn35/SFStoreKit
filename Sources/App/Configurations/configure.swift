@@ -29,9 +29,6 @@ public func configure(_ app: Application) throws {
     app.migrations.add(Order.Create())
     app.migrations.add(OrderItem.Create())
 
-    app.migrations.add(Order.AddEmail())
-    app.migrations.add(ColorVariant.FixUniqueConstraint())
-
     if (app.environment != .testing) {
         app.migrations.add(Seed.Tops())
         app.migrations.add(Seed.Bottoms())

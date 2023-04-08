@@ -13,7 +13,7 @@ struct Seed {
         func prepare(on database: Database) async throws {
             let categoryID = UUID()
             let topsCategpry = ProductCategory(id: categoryID,
-                                               name: "Tops", percentDiscount: 20)
+                                               name: "tops", percentDiscount: 20)
             try await topsCategpry.save(on: database)
 
             let tshirtModel = TShirt(categoryID: categoryID)

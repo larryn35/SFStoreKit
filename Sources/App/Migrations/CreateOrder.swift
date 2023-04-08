@@ -13,6 +13,7 @@ extension Order {
             try await database.schema(Order.schema)
                 .id()
                 .field(.Order.customerName, .string, .required)
+                .field(.Order.email, .string, .required)
                 .field(.Order.address, .string, .required)
                 .field(.Order.city, .string, .required)
                 .field(.Order.state, .string, .required)
