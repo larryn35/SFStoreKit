@@ -17,6 +17,9 @@ final class ProductCategory: Model, Content {
     @Field(key: .name)
     var name: String
 
+    @Children(for: \.$category)
+    var products: [Product]
+
     @Field(key: .ProductCategory.percentDiscount)
     var percentDiscount: Int?
 

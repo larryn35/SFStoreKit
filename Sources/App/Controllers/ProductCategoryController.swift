@@ -5,12 +5,14 @@
 //  Created by Larry Nguyen on 4/4/23.
 //
 
+import Fluent
 import Vapor
 
 struct ProductCategoryController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let categories = routes.grouped("product-categories")
         categories.get(use: index)
+        categories.get(":categoryName", use: fetchProductsForCategory)
         categories.post(use: create)
         categories.patch("update", ":categoryID", use: updateCategory)
         categories.delete("delete", ":categoryID", use: delete)
@@ -19,6 +21,23 @@ struct ProductCategoryController: RouteCollection {
     // GET Request: /product-categories route
     func index(req: Request) async throws -> [ProductCategory] {
         try await ProductCategory.query(on: req.db).all()
+    }
+
+    // GET Request: /product-categories route
+    func fetchProductsForCategory(req: Request) async throws -> [Product] {
+        guard let categoryName = req.parameters.get("categoryName") else {
+            throw Abort(.notFound)
+        }
+
+        let category = try await ProductCategory.query(on: req.db)
+            .filter(\.$name == categoryName)
+            .first()
+
+        if let category {
+            return try await category.$products.query(on: req.db).all()
+        } else {
+            throw Abort(.notFound)
+        }
     }
 
     // POST Request: /product-categories route
