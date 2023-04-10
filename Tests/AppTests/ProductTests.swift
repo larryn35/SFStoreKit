@@ -49,6 +49,28 @@ final class ProductTests: XCTestCase {
         })
     }
 
+    func testProductsCanBeRetrievedForCategoryFromAPI() async throws {
+        let topsCategoryID = try XCTUnwrap(topsCategory.id)
+        let bottomsCategoryID = try XCTUnwrap(bottomsCategory.id)
+
+        let shirt = try await Product.createShirtProduct(categoryID: topsCategoryID, save: app.db)
+        let sweater = try await Product.createSweaterProduct(categoryID: topsCategoryID, save: app.db)
+
+        let _ = try await Product.createPantsProduct(categoryID: bottomsCategoryID, save: app.db)
+
+        let categoryPath = path + "/tops"
+
+        try app.test(.GET, categoryPath, afterResponse: { response in
+            XCTAssertEqual(response.status, .ok)
+
+            let categories = try response.content.decode([Product].self)
+
+            XCTAssertEqual(categories.count, 2)
+            XCTAssertEqual(categories[0].name, shirt.name)
+            XCTAssertEqual(categories[1].name, sweater.name)
+        })
+    }
+
     func testProductCanBeSavedWithAPI() async throws {
         let shirtData = Product.createShirtData(category: topsCategory.name)
 

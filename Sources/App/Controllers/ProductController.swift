@@ -12,6 +12,7 @@ struct ProductController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let products = routes.grouped("products")
         products.get(use: index)
+        products.get(":categoryName", use: fetchProductsForCategory)
         products.post(use: create)
         products.patch("update", ":productID", use: updateProduct)
         products.delete("delete", ":productID", use: delete)
@@ -25,6 +26,23 @@ struct ProductController: RouteCollection {
             .all()
 
         return products.map { Product.ResponseData(product: $0) }
+    }
+
+    // GET Request: /products/:categoryName route
+    func fetchProductsForCategory(req: Request) async throws -> [Product] {
+        guard let categoryName = req.parameters.get("categoryName") else {
+            throw Abort(.notFound)
+        }
+
+        let category = try await ProductCategory.query(on: req.db)
+            .filter(\.$name == categoryName.lowercased())
+            .first()
+
+        if let category {
+            return try await category.$products.query(on: req.db).all()
+        } else {
+            throw Abort(.notFound)
+        }
     }
 
     // POST Request: /products route
