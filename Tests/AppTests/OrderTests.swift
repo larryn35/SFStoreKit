@@ -61,6 +61,9 @@ final class OrderTests: XCTestCase {
             XCTAssertEqual(orderSummary.city, timsOrder.city)
             XCTAssertEqual(orderSummary.state, timsOrder.state)
             XCTAssertEqual(orderSummary.zip, timsOrder.zip)
+
+            XCTAssertEqual(orderSummary.items[0].name, shirtOrderItem.name)
+
             XCTAssertEqual(orderSummary.total, expectedTotal)
             XCTAssertEqual(orderSummary.savings, expectedSavings)
         })
@@ -74,14 +77,14 @@ final class OrderTests: XCTestCase {
         }, afterResponse: { response in
             XCTAssertEqual(response.status, .ok)
 
-            let order = try response.content.decode(Order.self)
+            let orderSummary = try response.content.decode(Order.Summary.self)
 
-            XCTAssertEqual(order.customerName, timsOrder.customerName)
-            XCTAssertEqual(order.address, timsOrder.address)
-            XCTAssertEqual(order.email, timsOrder.email)
-            XCTAssertEqual(order.city, timsOrder.city)
-            XCTAssertEqual(order.state, timsOrder.state)
-            XCTAssertEqual(order.zip, timsOrder.zip)
+            XCTAssertEqual(orderSummary.customerName, timsOrder.customerName)
+            XCTAssertEqual(orderSummary.address, timsOrder.address)
+            XCTAssertEqual(orderSummary.email, timsOrder.email)
+            XCTAssertEqual(orderSummary.city, timsOrder.city)
+            XCTAssertEqual(orderSummary.state, timsOrder.state)
+            XCTAssertEqual(orderSummary.zip, timsOrder.zip)
         })
 
         let orderID = try XCTUnwrap(timsOrder.id)

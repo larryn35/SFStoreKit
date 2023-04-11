@@ -44,7 +44,7 @@ struct OrderController: RouteCollection {
     }
 
     // POST Request: /orders route
-    func create(req: Request) async throws -> Order {
+    func create(req: Request) async throws -> Order.Summary {
         let orderData = try req.content.decode(Order.CreateData.self)
         let order = Order(data: orderData)
         try await order.save(on: req.db)
@@ -52,7 +52,18 @@ struct OrderController: RouteCollection {
         let items = orderData.items.map { OrderItem(data: $0) }
         try await items.create(on: req.db)
 
-        return order
+        guard
+            let id = order.id,
+            let order = try await Order.query(on: req.db)
+            .filter(\.$id == id)
+            .with(\.$items)
+            .all()
+            .first
+        else {
+            throw Abort(.notFound)
+        }
+
+        return Order.Summary(order: order)
     }
 
     // DELETE Request: /orders/delete/:orderID

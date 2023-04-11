@@ -166,6 +166,8 @@ extension Product {
     }
 }
 
+// MARK: - ColorVariant
+
 extension ColorVariant {
     static func createBlueVariant(productID: UUID, save db: Database? = nil) async throws -> ColorVariant {
         let blueVariant = ColorVariant(product: productID,
