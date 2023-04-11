@@ -6,11 +6,13 @@
 //
 
 import Vapor
+import Fluent
 
 struct OrderController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let orders = routes.grouped("orders")
         orders.get(use: index)
+        orders.get(":orderID", use: fetchOrderSummary)
         orders.post(use: create)
         orders.delete("delete", ":orderID", use: delete)
     }
@@ -21,17 +23,35 @@ struct OrderController: RouteCollection {
             .with(\.$items)
             .all()
 
-        for order in orders {
-            order.discounts = order.items.reduce(0) { $0 + $1.discount }
+        return orders
+    }
+
+    // GET Request: /orders/:orderID route
+    func fetchOrderSummary(req: Request) async throws -> Order.Summary {
+        guard
+            let idString = req.parameters.get("orderID"),
+            let uuid = UUID(uuidString: idString),
+            let order = try await Order.query(on: req.db)
+                .filter(\.$id == uuid)
+                .with(\.$items)
+                .all()
+                .first
+        else {
+            throw Abort(.notFound)
         }
 
-        return orders
+        return Order.Summary(order: order)
     }
 
     // POST Request: /orders route
     func create(req: Request) async throws -> Order {
-        let order = try req.content.decode(Order.self)
+        let orderData = try req.content.decode(Order.CreateData.self)
+        let order = Order(data: orderData)
         try await order.save(on: req.db)
+
+        let items = orderData.items.map { OrderItem(data: $0) }
+        try await items.create(on: req.db)
+
         return order
     }
 

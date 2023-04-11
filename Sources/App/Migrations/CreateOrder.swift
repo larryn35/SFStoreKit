@@ -18,8 +18,6 @@ extension Order {
                 .field(.Order.city, .string, .required)
                 .field(.Order.state, .string, .required)
                 .field(.Order.zip, .string, .required)
-                .field(.Order.totalPrice, .int, .required)
-                .field(.Order.discounts, .int, .required)
                 .field(.createdAt, .date)
                 .create()
         }

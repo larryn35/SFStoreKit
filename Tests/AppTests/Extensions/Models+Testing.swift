@@ -17,9 +17,7 @@ extension Order {
                           address: "1 Apple Park Way",
                           city: "Cupertino",
                           state: "CA",
-                          zip: "95014",
-                          totalPrice: 20000,
-                          discounts: 0)
+                          zip: "95014")
 
         if let db {
             try await order.save(on: db)
@@ -28,15 +26,28 @@ extension Order {
         return order
     }
 
+    static func createTimsOrderData() -> Order.CreateData {
+        let orderID = UUID()
+
+        return .init(id: orderID,
+                     customerName: "Tim Apple",
+                     email: "tim@apple.com",
+                     address: "1 Apple Park Way",
+                     city: "Cupertino",
+                     state: "CA",
+                     zip: "95014",
+                     items: [
+                        OrderItem.createShirtOrderItemData(for: orderID)
+                     ])
+    }
+
     static func createLeannesOrder(save db: Database? = nil) async throws -> Order {
         let order = Order(customerName: "Leanne Graham",
                           email: "Sincere@april.biz",
                           address: "556 Kulas Light",
                           city: "Gwenborough",
                           state: "NA",
-                          zip: "92998",
-                          totalPrice: 8000,
-                          discounts: 400)
+                          zip: "92998")
 
         if let db {
             try await order.save(on: db)

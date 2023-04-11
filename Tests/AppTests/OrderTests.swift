@@ -20,7 +20,7 @@ final class OrderTests: XCTestCase {
         app.shutdown()
      }
 
-    func testOrderCanBeRetrievedFromAPI() async throws {
+    func testOrdersCanBeRetrievedFromAPI() async throws {
         let timsOrder = try await Order.createTimsOrder(save: app.db)
 
         try app.test(.GET, path, afterResponse: { response in
@@ -35,30 +35,39 @@ final class OrderTests: XCTestCase {
             XCTAssertEqual(orders[0].city, timsOrder.city)
             XCTAssertEqual(orders[0].state, timsOrder.state)
             XCTAssertEqual(orders[0].zip, timsOrder.zip)
-            XCTAssertEqual(orders[0].totalPrice, timsOrder.totalPrice)
         })
     }
 
-    func testOrderCalculatesCorrectDiscount() async throws {
+    func testOrderSummaryCanBeRetrievedFromAPI() async throws {
         let timsOrder = try await Order.createTimsOrder(save: app.db)
         let orderID = try XCTUnwrap(timsOrder.id)
 
         let shirtOrderItem = try await OrderItem.createShirtOrderItem(for: orderID, save: app.db)
         let shoesOrderItem = try await OrderItem.createShoesOrderItem(for: orderID, save: app.db)
 
-        let expectedDiscount = shirtOrderItem.discount + shoesOrderItem.discount
+        let expectedTotal = [shirtOrderItem, shoesOrderItem].total
+        let expectedSavings = [shirtOrderItem, shoesOrderItem].savings
 
-        try app.test(.GET, path, afterResponse: { response in
+        let orderPath = path + "/\(orderID)"
+
+        try app.test(.GET, orderPath, afterResponse: { response in
             XCTAssertEqual(response.status, .ok)
 
-            let orders = try response.content.decode([Order].self)
+            let orderSummary = try response.content.decode(Order.Summary.self)
 
-            XCTAssertEqual(orders[0].discounts, expectedDiscount)
+            XCTAssertEqual(orderSummary.customerName, timsOrder.customerName)
+            XCTAssertEqual(orderSummary.address, timsOrder.address)
+            XCTAssertEqual(orderSummary.email, timsOrder.email)
+            XCTAssertEqual(orderSummary.city, timsOrder.city)
+            XCTAssertEqual(orderSummary.state, timsOrder.state)
+            XCTAssertEqual(orderSummary.zip, timsOrder.zip)
+            XCTAssertEqual(orderSummary.total, expectedTotal)
+            XCTAssertEqual(orderSummary.savings, expectedSavings)
         })
     }
 
-    func testProductCategoryCanBeSavedWithAPI() async throws {
-        let timsOrder = try await Order.createTimsOrder()
+    func testOrderBeSavedWithAPI() async throws {
+        let timsOrder = Order.createTimsOrderData()
 
         try app.test(.POST, path, beforeRequest: { request in
             try request.content.encode(timsOrder)
@@ -73,11 +82,28 @@ final class OrderTests: XCTestCase {
             XCTAssertEqual(order.city, timsOrder.city)
             XCTAssertEqual(order.state, timsOrder.state)
             XCTAssertEqual(order.zip, timsOrder.zip)
-            XCTAssertEqual(order.totalPrice, timsOrder.totalPrice)
+        })
+
+        let orderID = try XCTUnwrap(timsOrder.id)
+        let orderItemsPath = "order-items/\(orderID)"
+
+        try app.test(.GET, orderItemsPath, afterResponse: { response in
+            XCTAssertEqual(response.status, .ok)
+
+            let orderItems = try response.content.decode([OrderItem].self)
+
+            XCTAssertEqual(orderItems.count, 1)
+            XCTAssertEqual(orderItems[0].name, timsOrder.items[0].name)
+            XCTAssertEqual(orderItems[0].image, timsOrder.items[0].image)
+            XCTAssertEqual(orderItems[0].color, timsOrder.items[0].color)
+            XCTAssertEqual(orderItems[0].size, timsOrder.items[0].size)
+            XCTAssertEqual(orderItems[0].price, timsOrder.items[0].price)
+            XCTAssertEqual(orderItems[0].discount, timsOrder.items[0].discount)
+            XCTAssertEqual(orderItems[0].quantity, timsOrder.items[0].quantity)
         })
     }
 
-    func testProductCategoryCanBeDeletedWithAPI() async throws {
+    func testOrderCanBeDeletedWithAPI() async throws {
         let dummyOrder = try await Order.createLeannesOrder(save: app.db)
         let timsOrder = try await Order.createTimsOrder(save: app.db)
 
@@ -104,7 +130,6 @@ final class OrderTests: XCTestCase {
             XCTAssertEqual(orders[0].city, timsOrder.city)
             XCTAssertEqual(orders[0].state, timsOrder.state)
             XCTAssertEqual(orders[0].zip, timsOrder.zip)
-            XCTAssertEqual(orders[0].totalPrice, timsOrder.totalPrice)
         })
     }
 }
