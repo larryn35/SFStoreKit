@@ -72,6 +72,7 @@ extension Product {
         let discount: Int
         let sizes: [String]
         let variants: [ColorVariant]
+        let updatedAt: Date
 
         init(product: Product) {
             let discount = (Double(product.price) * Double(product.category.percentDiscount ?? 0))/100
@@ -84,6 +85,7 @@ extension Product {
             self.discount = Int(discount)
             self.sizes = product.sizes
             self.variants = product.variants
+            self.updatedAt = product.updatedAt ?? Date()
         }
     }
 
