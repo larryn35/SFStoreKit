@@ -63,7 +63,7 @@ final class ProductTests: XCTestCase {
         try app.test(.GET, categoryPath, afterResponse: { response in
             XCTAssertEqual(response.status, .ok)
 
-            let categories = try response.content.decode([Product].self)
+            let categories = try response.content.decode([Product.ResponseData].self)
 
             XCTAssertEqual(categories.count, 2)
             XCTAssertEqual(categories[0].name, shirt.name)

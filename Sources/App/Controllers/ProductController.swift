@@ -29,7 +29,7 @@ struct ProductController: RouteCollection {
     }
 
     // GET Request: /products/:categoryName route
-    func fetchProductsForCategory(req: Request) async throws -> [Product] {
+    func fetchProductsForCategory(req: Request) async throws -> [Product.ResponseData] {
         guard let categoryName = req.parameters.get("categoryName") else {
             throw Abort(.notFound)
         }
@@ -39,7 +39,12 @@ struct ProductController: RouteCollection {
             .first()
 
         if let category {
-            return try await category.$products.query(on: req.db).all()
+            let products = try await category.$products.query(on: req.db)
+                .with(\.$category)
+                .with(\.$variants)
+                .all()
+
+            return products.map { Product.ResponseData(product: $0) }
         } else {
             throw Abort(.notFound)
         }
